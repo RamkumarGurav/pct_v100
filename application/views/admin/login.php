@@ -14,7 +14,7 @@
 	<div class="box-form">
 		<div class="left">
 			<div class="overlay">
-				<h3>Admin Login</h3>
+				<h2>Admin Login</h2>
 				<p>Welcome to Prachi Tours Admin Login Page
 				</p>
 

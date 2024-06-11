@@ -20,6 +20,233 @@ class Common_Model extends CI_Model
 		$this->db->query("SET sql_mode = ''");
 	}
 
+
+
+	/****************************************************************
+	 *GENERAL DB OPERATIONS
+	 ****************************************************************/
+
+
+
+
+	/**
+	 * Function to get names /records from tables without limit and orderby 
+	 *
+	 * @param array $params Associative array containing:
+	 *                      - 'select': Columns to select
+	 *                      - 'from': Table to select from
+	 *                      - 'where': Condition for the selection
+	 * @return array List of results from the query as array of objects
+	 */
+	function getName($params = array())
+	{
+		// Set the columns to select
+		$this->db->select($params['select']);
+
+		// Set the table to select from
+		$this->db->from($params['from']);
+
+		// Set the WHERE condition for the selection
+		$this->db->where("($params[where])");
+
+		// Execute the query and store the result
+		$query_get_list = $this->db->get();
+
+		// Return the result of the query as an array of objects
+		return $query_get_list->result();
+	}
+
+
+
+	/**
+	 * Common method for getting array of objects data from Table records
+	 * @param array $params An associative array containing the following keys:
+	 *                      - 'select': A string specifying the fields to select
+	 *                      - 'from': A string specifying the table to select from
+	 *                      - 'where': A string specifying the WHERE condition
+	 *                      - 'limit': (Optional) An integer specifying the number of records to return
+	 *                      - 'order_by': (Optional) A string specifying the ORDER BY clause
+	 * @return array The result of the query as an array of objects
+	 */
+	function getData($params = array())
+	{
+		// Set the SELECT part of the SQL query using the 'select' value from the $params array
+		$this->db->select($params['select']);
+
+		// Set the FROM part of the SQL query using the 'from' value from the $params array
+		$this->db->from($params['from']);
+
+		// Set the WHERE condition of the SQL query using the 'where' value from the $params array
+		$this->db->where("($params[where])");
+
+		// If a 'limit' value is provided in the $params array, set the LIMIT part of the SQL query
+		if (!empty($params['limit'])) {
+			$this->db->limit($params['limit']);
+		}
+
+		// If an 'order_by' value is provided in the $params array, set the ORDER BY part of the SQL query
+		if (!empty($params['order_by'])) {
+			$this->db->order_by($params['order_by']);
+		}
+
+		// Execute the query and store the result in $query_get_list
+		$query_get_list = $this->db->get();
+
+		// Return the result of the query as an array of objects
+		return $query_get_list->result();
+
+	}
+
+	/**
+	 * Function to add a new record to the database which gives inserted record Id if success otherwise false
+	 *
+	 * @param array $params Associative array containing:
+	 *                      - 'table': Table to insert into
+	 *                      - 'data': Data to insert
+	 * @return mixed Insert ID if successful, false otherwise
+	 */
+	function add_operation($params = array())
+	{
+		// Check if $params is empty, return false if true
+		if (empty($params))
+			return false;
+
+		// Insert data into specified table
+		$status = $this->db->insert($params['table'], $params['data']);
+
+		// If insert is successful, get the insert ID
+		if ($status) {
+			$status = $this->db->insert_id();
+		}
+
+		// Return the status (insert ID or false)
+		return $status;
+	}
+
+	/**
+	 * Function to update an existing record in the database, if there are no params then it returns -1 if necessary params provided returns true or false based on update operation success and failure
+	 * 
+	 *
+	 * @param array $params Associative array containing:
+	 * 											- 'condition': Condition for the update
+	 *                      - 'table': Table to update
+	 *                      - 'data': Data to update
+	 *                      
+	 * @return bool True if update is successful, false otherwise
+	 */
+	function update_operation($params = array())
+	{
+		// Check if $params is empty, return -1 if true
+		if (empty($params))
+			return -1;
+
+		// Set the WHERE condition for the update
+		$this->db->where($params['condition']);
+
+		// Update the specified table with the provided data
+		$status = $this->db->update($params['table'], $params['data']);
+
+		// Return the status (true if update is successful, false otherwise)
+		return $status;
+	}
+
+
+	/**
+	 * Function to delete a record from the database 
+	 *
+	 * @param array $params Associative array containing:
+	 *                      - 'table': Table to delete from
+	 *                      - 'where': Condition for the delete
+	 * @return bool True if delete is successful, false otherwise
+	 */
+	function delete_operation($params = array())
+	{
+		// Set the WHERE condition for the delete
+		$this->db->where($params['where']);
+
+		// Delete the record from the specified table and store the status of the operation
+		$status = $this->db->delete($params['table']);
+
+		// Optionally, you can uncomment the next line to print the last executed query for debugging
+		// echo $this->db->last_query();
+
+		// Return the status (true if delete is successful, false otherwise)
+		return $status;
+	}
+	/****************************************************************
+	 *****************************************************************/
+
+	/****************************************************************
+	 *SPECIFIC DB TABLE DATA OPERATIONS
+	 *****************************************************************/
+	/**
+	 * Function to retrieve country data from the database
+	 *
+	 * @param array $params Optional parameters
+	 * @return mixed Array containing country data if found, otherwise false
+	 */
+	function getCountry($params = array())
+	{
+		// Select specific columns from the 'country' table
+		$this->db
+			->select('c.country_id, c.country_name, c.country_short_name, c.country_code')
+			->from('country as c')
+			->where('status', 1); // Filter by status = 1 (assuming 1 represents active)
+
+		// Execute the query
+		$result = $this->db->get();
+
+		// Check if there are rows returned
+		if ($result->num_rows() > 0) {
+			// If rows are found, retrieve the result as an array of objects
+			$result = $result->result();
+			// Optionally, you can remove the following line as it does not modify the result
+			$result = $result;
+			// Return the result
+			return $result;
+		} else {
+			// If no rows are found, return false
+			return false;
+		}
+	}
+	/****************************************************************
+	 ****************************************************************/
+
+
+	/****************************************************************
+	 * HELPERS			
+	 *****************************************************************/
+
+	/**
+	 * Method to get client IP address
+	 */
+	function get_client_ip()
+	{
+		$ipaddress = '';
+		if (isset($_SERVER['HTTP_CLIENT_IP']))
+			$ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+		else if (isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+			$ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+		else if (isset($_SERVER['HTTP_X_FORWARDED']))
+			$ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+		else if (isset($_SERVER['HTTP_FORWARDED_FOR']))
+			$ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+		else if (isset($_SERVER['HTTP_FORWARDED']))
+			$ipaddress = $_SERVER['HTTP_FORWARDED'];
+		else if (isset($_SERVER['REMOTE_ADDR']))
+			$ipaddress = $_SERVER['REMOTE_ADDR'];
+		else
+			$ipaddress = 'UNKNOWN';
+		return $ipaddress;
+	}
+
+	/****************************************************************
+																												 
+																	*****************************************************************/
+
+	/****************************************************************
+	 ****************************************************************
+	 *****************************************************************/
 	function getCartItemCount()
 	{
 		$cart_count = 0;
@@ -148,17 +375,17 @@ class Common_Model extends CI_Model
 			$this->db->where("c.is_outer_menu", $params['is_outer_menu']);
 		}
 		/*if(__is_location_wise_product__)
-								{
-									$this->db->where("p.is_sell_local  in (".__app_is_sell_local__.")");
-								}*/
+																																																																	{
+																																																																		$this->db->where("p.is_sell_local  in (".__app_is_sell_local__.")");
+																																																																	}*/
 		/*if($this->client_type==2)
-								{
-									$this->db->where("p.product_sell_to  in (1,3)");
-								}
-								else
-								{
-									$this->db->where("p.product_sell_to  in (1,2)");
-								}*/
+																																																																	{
+																																																																		$this->db->where("p.product_sell_to  in (1,3)");
+																																																																	}
+																																																																	else
+																																																																	{
+																																																																		$this->db->where("p.product_sell_to  in (1,2)");
+																																																																	}*/
 
 		$query_get_list = $this->db->get(); {
 
@@ -189,17 +416,17 @@ class Common_Model extends CI_Model
 						//->where('pis.status' , 1)
 						->order_by('c.position asc');
 					/*if(__is_location_wise_product__)
-																		 {
-																			 $this->db->where("p.is_sell_local  in (".__app_is_sell_local__.")");
-																		 }
-																		 if($this->client_type==2)
-																		 {
-																			 $this->db->where("p.product_sell_to  in (1,3)");
-																		 }
-																		 else
-																		 {
-																			 $this->db->where("p.product_sell_to  in (1,2)");
-																		 }*/
+																																																																																																																																																																	{
+																																																																																																																																																																		$this->db->where("p.is_sell_local  in (".__app_is_sell_local__.")");
+																																																																																																																																																																	}
+																																																																																																																																																																	if($this->client_type==2)
+																																																																																																																																																																	{
+																																																																																																																																																																		$this->db->where("p.product_sell_to  in (1,3)");
+																																																																																																																																																																	}
+																																																																																																																																																																	else
+																																																																																																																																																																	{
+																																																																																																																																																																		$this->db->where("p.product_sell_to  in (1,2)");
+																																																																																																																																																																	}*/
 					$query_get_list1 = $this->db->get();
 					//echo $this->db->last_query();
 					{
@@ -228,17 +455,17 @@ class Common_Model extends CI_Model
 									//	->where('pis.status' , 1)
 									->order_by('c.position asc');
 								/*if(__is_location_wise_product__)
-																													{
-																														$this->db->where("p.is_sell_local  in (".__app_is_sell_local__.")");
-																													}
-																													if($this->client_type==2)
-																													{
-																														$this->db->where("p.product_sell_to  in (1,3)");
-																													}
-																													else
-																													{
-																														$this->db->where("p.product_sell_to  in (1,2)");
-																													}*/
+																																																																																																																																																																																																																																																																	{
+																																																																																																																																																																																																																																																																		$this->db->where("p.is_sell_local  in (".__app_is_sell_local__.")");
+																																																																																																																																																																																																																																																																	}
+																																																																																																																																																																																																																																																																	if($this->client_type==2)
+																																																																																																																																																																																																																																																																	{
+																																																																																																																																																																																																																																																																		$this->db->where("p.product_sell_to  in (1,3)");
+																																																																																																																																																																																																																																																																	}
+																																																																																																																																																																																																																																																																	else
+																																																																																																																																																																																																																																																																	{
+																																																																																																																																																																																																																																																																		$this->db->where("p.product_sell_to  in (1,2)");
+																																																																																																																																																																																																																																																																	}*/
 								$query_get_list2 = $this->db->get(); {
 									if ($query_get_list2->num_rows() > 0) {
 										$sscCount = -1;
@@ -477,61 +704,12 @@ class Common_Model extends CI_Model
 	}
 
 
-	function delete_operation($params = array())
-	{
-		$this->db->where($params['where']);
-		$status = $this->db->delete($params['table']);
-		//echo $this->db->last_query();
-		return $status;
-	}
 
-	function getName($params = array())
-	{
-		$this->db->select($params['select']);
-		$this->db->from($params['from']);
-		$this->db->where("($params[where])");
-		$query_get_list = $this->db->get();
-		return $query_get_list->result();
-	}
 
-	function getData($params = array())
-	{
-		$this->db->select($params['select']);
-		$this->db->from($params['from']);
-		$this->db->where("($params[where])");
-		if (!empty($params['limit'])) {
-			$this->db->limit($params['limit']);
-		}
-		if (!empty($params['order_by'])) {
-			$this->db->order_by($params['order_by']);
-		}
-		$query_get_list = $this->db->get();
-		return $query_get_list->result();
-	}
 
-	function add_operation($params = array())
-	{
-		if (empty($params))
-			return false;
-		$status = $this->db->insert($params['table'], $params['data']);
-		if ($status) {
-			$status = $status = $this->db->insert_id();
-		}
-		//echo $this->db->last_query();
-		return $status;
-	}
 
-	function update_operation($params = array())
-	{
 
-		if (empty($params))
-			return -1;
 
-		$this->db->where($params['condition']);
-		$status = $this->db->update($params['table'], $params['data']);
-
-		return $status;
-	}
 
 	function random_password($password_length = 8, $type = 'both')
 	{
@@ -639,25 +817,7 @@ class Common_Model extends CI_Model
 		}
 	}
 
-	function get_client_ip()
-	{
-		$ipaddress = '';
-		if (isset($_SERVER['HTTP_CLIENT_IP']))
-			$ipaddress = $_SERVER['HTTP_CLIENT_IP'];
-		else if (isset($_SERVER['HTTP_X_FORWARDED_FOR']))
-			$ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
-		else if (isset($_SERVER['HTTP_X_FORWARDED']))
-			$ipaddress = $_SERVER['HTTP_X_FORWARDED'];
-		else if (isset($_SERVER['HTTP_FORWARDED_FOR']))
-			$ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
-		else if (isset($_SERVER['HTTP_FORWARDED']))
-			$ipaddress = $_SERVER['HTTP_FORWARDED'];
-		else if (isset($_SERVER['REMOTE_ADDR']))
-			$ipaddress = $_SERVER['REMOTE_ADDR'];
-		else
-			$ipaddress = 'UNKNOWN';
-		return $ipaddress;
-	}
+
 
 	function send_mail($params = array())
 	{
@@ -762,8 +922,8 @@ class Common_Model extends CI_Model
 		$insertStatus = $this->add_operation(array('table' => 'email_log', 'data' => $entereddatamaillog));
 		//exit;
 		/*$params['to'] = 'abhishek.khandelwal@marswebsolution.com';
-							$params['name'] = 'Abhishek Khandelwal';
-							$this->re_send_mail($params);*/
+																																																																$params['name'] = 'Abhishek Khandelwal';
+																																																																$this->re_send_mail($params);*/
 	}
 
 	function re_send_mail($params = array())
@@ -922,21 +1082,8 @@ class Common_Model extends CI_Model
 		//exit;
 	}
 
-	function getCountry($params = array())
-	{
-		$this->db
-			->select('c.country_id , c.country_name , c.country_short_name , c.country_code')
-			->from('country as c')
-			->where('status', 1);
-		$result = $this->db->get();
-		if ($result->num_rows() > 0) {
-			$result = $result->result();
-			$result = $result;
-			return $result;
-		} else {
-			return false;
-		}
-	}
+
+
 }
 
 ?>
