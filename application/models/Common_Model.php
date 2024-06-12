@@ -59,7 +59,7 @@ class Common_Model extends CI_Model
 
 
 	/**
-	 * Common method for getting array of objects data from Table records
+	 * Common method for getting array of objects data from Table records if you are looking for single record then it will be present at 0th index
 	 * @param array $params An associative array containing the following keys:
 	 *                      - 'select': A string specifying the fields to select
 	 *                      - 'from': A string specifying the table to select from
@@ -129,6 +129,7 @@ class Common_Model extends CI_Model
 	 *
 	 * @param array $params Associative array containing:
 	 * 											- 'condition': Condition for the update
+	 *                      - 'condition': condition to find record 
 	 *                      - 'table': Table to update
 	 *                      - 'data': Data to update
 	 *                      
@@ -203,6 +204,8 @@ class Common_Model extends CI_Model
 			// Optionally, you can remove the following line as it does not modify the result
 			$result = $result;
 			// Return the result
+
+
 			return $result;
 		} else {
 			// If no rows are found, return false
@@ -241,8 +244,8 @@ class Common_Model extends CI_Model
 	}
 
 	/****************************************************************
-																												 
-																	*****************************************************************/
+																													 
+																		*****************************************************************/
 
 	/****************************************************************
 	 ****************************************************************
@@ -375,17 +378,17 @@ class Common_Model extends CI_Model
 			$this->db->where("c.is_outer_menu", $params['is_outer_menu']);
 		}
 		/*if(__is_location_wise_product__)
-																																																																	{
-																																																																		$this->db->where("p.is_sell_local  in (".__app_is_sell_local__.")");
-																																																																	}*/
+																																																																			{
+																																																																				$this->db->where("p.is_sell_local  in (".__app_is_sell_local__.")");
+																																																																			}*/
 		/*if($this->client_type==2)
-																																																																	{
-																																																																		$this->db->where("p.product_sell_to  in (1,3)");
-																																																																	}
-																																																																	else
-																																																																	{
-																																																																		$this->db->where("p.product_sell_to  in (1,2)");
-																																																																	}*/
+																																																																			{
+																																																																				$this->db->where("p.product_sell_to  in (1,3)");
+																																																																			}
+																																																																			else
+																																																																			{
+																																																																				$this->db->where("p.product_sell_to  in (1,2)");
+																																																																			}*/
 
 		$query_get_list = $this->db->get(); {
 
@@ -416,17 +419,17 @@ class Common_Model extends CI_Model
 						//->where('pis.status' , 1)
 						->order_by('c.position asc');
 					/*if(__is_location_wise_product__)
-																																																																																																																																																																	{
-																																																																																																																																																																		$this->db->where("p.is_sell_local  in (".__app_is_sell_local__.")");
-																																																																																																																																																																	}
-																																																																																																																																																																	if($this->client_type==2)
-																																																																																																																																																																	{
-																																																																																																																																																																		$this->db->where("p.product_sell_to  in (1,3)");
-																																																																																																																																																																	}
-																																																																																																																																																																	else
-																																																																																																																																																																	{
-																																																																																																																																																																		$this->db->where("p.product_sell_to  in (1,2)");
-																																																																																																																																																																	}*/
+																																																																																																																																																																						{
+																																																																																																																																																																							$this->db->where("p.is_sell_local  in (".__app_is_sell_local__.")");
+																																																																																																																																																																						}
+																																																																																																																																																																						if($this->client_type==2)
+																																																																																																																																																																						{
+																																																																																																																																																																							$this->db->where("p.product_sell_to  in (1,3)");
+																																																																																																																																																																						}
+																																																																																																																																																																						else
+																																																																																																																																																																						{
+																																																																																																																																																																							$this->db->where("p.product_sell_to  in (1,2)");
+																																																																																																																																																																						}*/
 					$query_get_list1 = $this->db->get();
 					//echo $this->db->last_query();
 					{
@@ -455,17 +458,17 @@ class Common_Model extends CI_Model
 									//	->where('pis.status' , 1)
 									->order_by('c.position asc');
 								/*if(__is_location_wise_product__)
-																																																																																																																																																																																																																																																																	{
-																																																																																																																																																																																																																																																																		$this->db->where("p.is_sell_local  in (".__app_is_sell_local__.")");
-																																																																																																																																																																																																																																																																	}
-																																																																																																																																																																																																																																																																	if($this->client_type==2)
-																																																																																																																																																																																																																																																																	{
-																																																																																																																																																																																																																																																																		$this->db->where("p.product_sell_to  in (1,3)");
-																																																																																																																																																																																																																																																																	}
-																																																																																																																																																																																																																																																																	else
-																																																																																																																																																																																																																																																																	{
-																																																																																																																																																																																																																																																																		$this->db->where("p.product_sell_to  in (1,2)");
-																																																																																																																																																																																																																																																																	}*/
+																																																																																																																																																																																																																																																																									{
+																																																																																																																																																																																																																																																																										$this->db->where("p.is_sell_local  in (".__app_is_sell_local__.")");
+																																																																																																																																																																																																																																																																									}
+																																																																																																																																																																																																																																																																									if($this->client_type==2)
+																																																																																																																																																																																																																																																																									{
+																																																																																																																																																																																																																																																																										$this->db->where("p.product_sell_to  in (1,3)");
+																																																																																																																																																																																																																																																																									}
+																																																																																																																																																																																																																																																																									else
+																																																																																																																																																																																																																																																																									{
+																																																																																																																																																																																																																																																																										$this->db->where("p.product_sell_to  in (1,2)");
+																																																																																																																																																																																																																																																																									}*/
 								$query_get_list2 = $this->db->get(); {
 									if ($query_get_list2->num_rows() > 0) {
 										$sscCount = -1;
@@ -922,8 +925,8 @@ class Common_Model extends CI_Model
 		$insertStatus = $this->add_operation(array('table' => 'email_log', 'data' => $entereddatamaillog));
 		//exit;
 		/*$params['to'] = 'abhishek.khandelwal@marswebsolution.com';
-																																																																$params['name'] = 'Abhishek Khandelwal';
-																																																																$this->re_send_mail($params);*/
+																																																																		$params['name'] = 'Abhishek Khandelwal';
+																																																																		$this->re_send_mail($params);*/
 	}
 
 	function re_send_mail($params = array())
